@@ -1,0 +1,4 @@
+- allow user tuning of peak prominence (or w/e parameter) after signal is generated and before program exit
+
+- come up with a better parameter to play with than peak prominence... the issue is that the effect of peak prominence on results depends on number of frames,
+  which doesn't allow user to tinker with small number of frames and expect the results to scale up nicely.
