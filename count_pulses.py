@@ -20,16 +20,30 @@ parser.add_argument('--wlen',
                     type=int,
                     default=200
                    )
+parser.add_argument('--window',
+                    nargs='?',
+                    help='size (in pixels) of window in which to crop red pulse image in each frame. (default:40)',
+                    type=int,
+                    default=40
+                   )
+parser.add_argument('--showframe',
+                    nargs='?',
+                    help='instead of running as usual, show cropped frame of given index',
+                    type=int,
+                    metavar='frame_number')
 args=parser.parse_args()
 FILENAME=args.filename
 PROMINENCE=args.prominence
 FRAMES=args.frames
 WLEN=args.wlen
+WINSIZE=args.window
+SHOWFRAME=args.showframe
+
 
 filename=FILENAME
 vid=cv2.VideoCapture(filename)
 
-def find_dot(channel, threshold=250,window_size=20):
+def find_dot(channel, threshold=250,window_size=WINSIZE//2):
     """Return crop xmin,xmax,yminymax.
        
        channel: the img/channel to use in order to find the dot (e.g. the red channel of a frame)
@@ -46,6 +60,21 @@ def find_dot(channel, threshold=250,window_size=20):
     dotx,doty=int(dotx),int(doty)
     return dotx-window_size,dotx+window_size,doty-window_size,doty+window_size
 
+
+if not (SHOWFRAME is None):
+    i=0
+    successful_read=True
+    while successful_read:
+        i+=1
+        successful_read,frame = vid.read()
+        if i>=SHOWFRAME:
+            frame=cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+            xmin,xmax,ymin,ymax=find_dot(frame[:,:,0])
+            plt.imshow(frame[xmin:xmax,ymin:ymax])
+            plt.show()
+            sys.exit(0)
+
+    
 
 successful_read,frame = vid.read()
 red_channel=frame[:,:,2]
