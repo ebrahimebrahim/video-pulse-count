@@ -27,18 +27,19 @@ parser.add_argument('--window',
                     default=40
                    )
 parser.add_argument('--showframe',
-                    nargs='?',
-                    help='instead of running as usual, show cropped frame of given index (default: show frame 2)\nrecommended to use this with --window to get cropping right',
+                    nargs=1,
+                    help='instead of running as usual, show cropped frame of given index\nrecommended to use this with --window to get cropping right',
                     type=int,
                     metavar='frame_number',
-                    default=2)
+                   )
 args=parser.parse_args()
 FILENAME=args.filename
 PROMINENCE=args.prominence
 FRAMES=args.frames
 WLEN=args.wlen
 WINSIZE=args.window
-SHOWFRAME=args.showframe
+SHOWFRAME=None if args.showframe is None else args.showframe[0] 
+
 
 
 filename=FILENAME
