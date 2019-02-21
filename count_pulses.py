@@ -7,16 +7,24 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Count red pulses in a video file.')
 parser.add_argument('filename',help='path to video file', type=str, metavar="filename")
-parser.add_argument('frames',nargs='?',help='number of frames to process (defualt: process entire video)',type=int)
-parser.add_argument('prominence',
+parser.add_argument('--frames',nargs='?',help='number of frames to process (defualt: process entire video)',type=int)
+parser.add_argument('--prominence',
                     nargs='?',
-                    help='peak prominence needed for to include peak in count (defualt: 5)\nsee scipy.signal documentation for definition of peak prominence',
-                    type=float
+                    help='peak prominence needed for to include peak in count (defualt: 8)\nsee scipy.signal documentation for definition of peak prominence',
+                    type=float,
+                    default=8
+                   )
+parser.add_argument('--wlen',
+                    nargs='?',
+                    help='size of window in which peak prominence is measured (defualt: 200)\nfor details, see scipy.signal documentation on peak prominance',
+                    type=int,
+                    default=200
                    )
 args=parser.parse_args()
 FILENAME=args.filename
 PROMINENCE=args.prominence
 FRAMES=args.frames
+WLEN=args.wlen
 
 filename=FILENAME
 vid=cv2.VideoCapture(filename)
@@ -56,7 +64,7 @@ while successful_read:
     if (not FRAMES is None) and i>FRAMES: break
 means=np.array(means)
 
-peaks, properties = scipy.signal.find_peaks(means,prominence=PROMINENCE)
+peaks, properties = scipy.signal.find_peaks(means,prominence=PROMINENCE,wlen=WLEN)
 plt.plot(means)
 plt.plot(peaks,[means[p] for p in peaks],'ro')
 print(len(peaks), " peaks found.")
